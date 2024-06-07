@@ -1,10 +1,3 @@
-//---------------------------------------------------------------------
-// Arquivo      : evalenum.c
-// Conteudo     : avaliacao de desempenho de algoritmos de ordenacao 
-// Autor        : Wagner Meira Jr. (meira@dcc.ufmg.br)
-// Historico    : 2023-11-04 - arquivo criado
-//---------------------------------------------------------------------
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -78,53 +71,31 @@ typedef struct sortperf{
   int calls;
 } sortperf_t;
 
-void resetcounter(sortperf_t * s){
-// Descricao: inicializa estrutura
-// Entrada: 
-// Saida: s
+void resetcounter(sortperf_t * s) {
   s->cmp = 0;
   s->move = 0;
   s->calls = 0;
 }
 
-void inccmp(sortperf_t * s, int num){
-// Descricao: incrementa o numero de comparacoes em num 
-// Entrada: s, num
-// Saida: s
+void inccmp(sortperf_t * s, int num) {
   s->cmp += num;
 }
 
-void incmove(sortperf_t * s, int num){
-// Descricao: incrementa o numero de movimentacoes de dados em num 
-// Entrada: s, num
-// Saida: s
+void incmove(sortperf_t * s, int num) {
   s->move += num;
 }
 
 void inccalls(sortperf_t * s, int num){
-// Descricao: incrementa o numero de chamadas de função em num 
-// Entrada: s, num
-// Saida: s
   s->calls += num;
 }
 
 char * printsortperf(sortperf_t * s, char * str, char * pref){
-// Descricao: gera string com valores de sortperf 
-// Entrada: s, pref
-// Saida: str
-
  sprintf(str,"%s cmp %d move %d calls %d", pref, s->cmp, s->move, s->calls); 
  return str;
 }
 
-
 void initVector(int * vet, int size, int tipoDeVetor){
-// Descricao: inicializa vet com valores aleatorios ou ordenados
-// 0: Aleatório   1: Crescente  2: Decrescente
-// Entrada: vet
-// Saida: vet
   int i;
-  // inicializa a parte alocada da vetor com valores aleatorios
   if(tipoDeVetor == 0){
     for (i=0; i<size; i++){
       vet[i] = (int)(drand48()*size);
@@ -142,9 +113,6 @@ void initVector(int * vet, int size, int tipoDeVetor){
   }
 }
 void printVector(int * vet, int size){
-// Descricao: inicializa vet com valores aleatorios
-// Entrada: vet
-// Saida: vet
   int i;
   for (i=0; i<size; i++){
     printf("%d ",vet[i]);
@@ -158,7 +126,6 @@ void swap(int *xp, int *yp, sortperf_t *s){
     *yp = temp;
     incmove(s,3);
 }
-//bubble sort
 
 void bolha(int *v, int n, sortperf_t *s) {
   inccalls(s,1);
@@ -172,34 +139,30 @@ void bolha(int *v, int n, sortperf_t *s) {
         }
     }
 }
-//mergesort
-void merge(int arr[], int l, int m, int r, sortperf_t *s)
-{
+
+void merge(int arr[], int l, int m, int r, sortperf_t *s) {
     inccalls(s,1);
     int i, j, k;
     int n1 = m - l + 1;
     int n2 = r - m;
 
-    // Create temp arrays
     int L[n1], R[n2];
 
-    // Copy data to temp arrays L[] and R[]
     for (i = 0; i < n1; i++) {
         L[i] = arr[l + i];
-        incmove(s, 1); // Increment move count for copying data
+        incmove(s, 1); 
     }
     for (j = 0; j < n2; j++) {
         R[j] = arr[m + 1 + j];
-        incmove(s, 1); // Increment move count for copying data
+        incmove(s, 1); 
     }
 
-    // Merge the temp arrays back into arr[l..r]
     i = 0;
     j = 0;
     k = l;
   
     while (i < n1 && j < n2) {
-        inccmp(s, 1); // Increment comparison count
+        inccmp(s, 1); 
         if (L[i] <= R[j]) {
             arr[k] = L[i];
             i++;
@@ -209,20 +172,16 @@ void merge(int arr[], int l, int m, int r, sortperf_t *s)
             j++;
         }
         k++;
-        incmove(s, 1); // Increment move count for merging
+        incmove(s, 1); 
     }
 
-    // Copy the remaining elements of L[], if there are any
-   
     while (i < n1) {
         arr[k] = L[i];
         i++;
         k++;
-        incmove(s, 1); // Increment move count for copying remaining elements
+        incmove(s, 1); 
     }
 
-    // Copy the remaining elements of R[], if there are any
- 
     while (j < n2) {
         arr[k] = R[j];
         j++;
@@ -231,24 +190,19 @@ void merge(int arr[], int l, int m, int r, sortperf_t *s)
     }
 }
 
-void mergeSort(int arr[], int l, int r, sortperf_t *s)
-{
-   inccalls(s, 1); 
-    if (l < r) {
-        int m = l + (r - l) / 2;
+void mergeSort(int arr[], int l, int r, sortperf_t *s) {
+  inccalls(s, 1); 
+  if (l < r) {
+    int m = l + (r - l) / 2;
 
-        // Sort first and second halves
-        mergeSort(arr, l, m, s);
-        mergeSort(arr, m + 1, r, s);
+    mergeSort(arr, l, m, s);
+    mergeSort(arr, m + 1, r, s);
 
-        merge(arr, l, m, r, s);
-
-    }
+    merge(arr, l, m, r, s);
+  }
 }
 
-//coutingsort
-int pegarmaximoimo(int *vetor, int tamanho)
-{
+int pegarmaximoimo(int *vetor, int tamanho) {
   int maximo = vetor[0];
   for (int i = 1; i < tamanho; i++)
     if (vetor[i] > maximo)
@@ -259,22 +213,21 @@ int pegarmaximoimo(int *vetor, int tamanho)
 void countingsort(int *values, int n,sortperf_t *s) {
   inccalls(s,1);
   int y=pegarmaximoimo(values, n);
-int *counts = (int *) calloc(y, sizeof(int));
-int i, j;
-for (i = 0; i < n; i++)
-counts[values[i]]++;
-i = 0;
-for(j = 0; j < y; j++)
-while(counts[j] > 0) {
-values[i++] = j;
-counts[j]--;
-incmove(s, 1);
+  int *counts = (int *) calloc(y, sizeof(int));
+  int i, j;
+  for (i = 0; i < n; i++)
+  counts[values[i]]++;
+  i = 0;
+  for(j = 0; j < y; j++)
+  while(counts[j] > 0) {
+  values[i++] = j;
+  counts[j]--;
+  incmove(s, 1);
+  }
+  free(counts);
 }
-free(counts);
-}
-//bucketsort
-void bucketSort(int *vetor, int tamanho,sortperf_t *s)
-{
+
+void bucketSort(int *vetor, int tamanho,sortperf_t *s) {
   inccalls(s,1);
   int balde[tamanho+1];
 
@@ -298,7 +251,7 @@ void bucketSort(int *vetor, int tamanho,sortperf_t *s)
     }
   }
 }
-//radixsort
+
 int getMax(int array[], int n) {
   int max = array[0];
   for (int i = 1; i < n; i++)
@@ -306,15 +259,13 @@ int getMax(int array[], int n) {
       max = array[i];
   return max;
 }
+
 void radixsort(int array[], int size, sortperf_t *s) {
     inccalls(s,1);
     int max = getMax(array, size);
     countingsort(array, size, s); // Chama countingsort uma vez
 }
 
-
-
-// shellsort
 void shellSort(int *A, int n, sortperf_t * s) {
   inccalls(s, 1);
   for (int h=n/2; h>0; h/=2){
@@ -335,10 +286,7 @@ void shellSort(int *A, int n, sortperf_t * s) {
   return;
 }
 
-
-// recursive selection sort
-void recursiveSelectionSort(int arr[], int l, int r, sortperf_t * s)
-{
+void recursiveSelectionSort(int arr[], int l, int r, sortperf_t * s) {
     // find the minimum element in the unsorted subarray `[i…n-1]`
     // and swap it with `arr[i]`
     int min = l;
@@ -361,7 +309,6 @@ void recursiveSelectionSort(int arr[], int l, int r, sortperf_t * s)
     }
 }
 
-// selection sort
 void selectionSort(int arr[], int l, int r, sortperf_t * s) { 
   inccalls(s, 1);
   for(int i=l; i<r-1; i++){
@@ -379,30 +326,26 @@ void selectionSort(int arr[], int l, int r, sortperf_t * s) {
   return;
 }
 
-//insertion sort
-
 void insertionSort(int v[], int l, int r, sortperf_t * s) {
   inccalls(s, 1);
   int j,aux;
-for(int i=l+1; i<=r; i++){
-  aux= v[i];
-  j=i-1;
-  incmove(s, 1);
-  inccmp(s,1);
-  while(j>=0 && aux<v[j]){
-    v[j+1]=v[j];
-    j--;
+  for(int i=l+1; i<=r; i++){
+    aux= v[i];
+    j=i-1;
     incmove(s, 1);
     inccmp(s,1);
+    while(j>=0 && aux<v[j]){
+      v[j+1]=v[j];
+      j--;
+      incmove(s, 1);
+      inccmp(s,1);
+    }
+    v[j+1]=aux;
+    incmove(s, 1);
   }
-  v[j+1]=aux;
-  incmove(s, 1);
-}
-return;
+  return;
 }
 
-  
-// median of 3 integers
 int median (int a, int b, int c) {
     if ((a <= b) && (b <= c)) return b;  // a b c
     if ((a <= c) && (c <= b)) return c;  // a c b
@@ -412,7 +355,6 @@ int median (int a, int b, int c) {
     return b;                            // c b a
 }
 
-// quicksort partition using median of 3
 void partition3(int * A, int l, int r, int *i, int *j, sortperf_t *s) {
   inccalls(s,1);
   *i=l;
@@ -438,7 +380,6 @@ void partition3(int * A, int l, int r, int *i, int *j, sortperf_t *s) {
 
 }
 
-// standard quicksort partition
 void partition(int * A, int l, int r, int *i, int *j, sortperf_t *s) {
   inccalls(s,1);
   *i=l;
@@ -463,7 +404,6 @@ void partition(int * A, int l, int r, int *i, int *j, sortperf_t *s) {
   }while(*i<=*j);
 }
 
-// standard quicksort
 void quickSort(int * A, int l, int r, sortperf_t *s) {
   inccalls(s,1);
   int i = l; 
@@ -473,7 +413,6 @@ void quickSort(int * A, int l, int r, sortperf_t *s) {
   if (r>i) quickSort(A,i,r,s);
 }
 
-// quicksort with median of 3
 void quickSort3(int * A, int l, int r, sortperf_t *s) { 
   inccalls(s,1);
   int i = l; 
@@ -483,8 +422,6 @@ void quickSort3(int * A, int l, int r, sortperf_t *s) {
   if (r>i) quickSort3(A,i,r,s);
 }
 
-
-// quicksort with insertion for small partitions
 void quickSortIns(int * A, int l, int r, sortperf_t *s) { 
   inccalls(s,1);
   int i; 
@@ -508,8 +445,6 @@ void quickSortIns(int * A, int l, int r, sortperf_t *s) {
   }
 }
 
-
-// quicksort with insertion for small partitions and median of 3
 void quickSort3Ins(int * A, int l, int r, sortperf_t *s) { 
   inccalls(s,1);
   int i; 
@@ -532,13 +467,8 @@ void quickSort3Ins(int * A, int l, int r, sortperf_t *s) {
     }
   }
 }
- 
 
-void uso()
-// Descricao: imprime as opcoes de uso
-// Entrada: nao tem
-// Saida: impressao das opcoes de linha de comando
-{
+void uso() {
   fprintf(stderr,"sortperf\n");
   fprintf(stderr,"\t-z <int>\t(vector size)\n");
   fprintf(stderr,"\t-s <int>\t(initialization seed)\n");
@@ -558,19 +488,11 @@ void uso()
   fprintf(stderr,"\t    rx\tradix\n");
 }
 
-void parse_args(int argc, char ** argv, opt_t * opt)
-// Descricao: le as opcoes da linha de comando e inicializa variaveis
-// Entrada: argc, argv, opt
-// Saida: opt
-{
-     // variaveis externas do getopt
+void parse_args(int argc, char ** argv, opt_t * opt) {
+
      extern char * optarg;
      extern int optind;
-
-     // variavel auxiliar
      int c;
-
-     // inicializacao variaveis globais para opcoes
      opt->seed = 1;
      opt->size = 10;
      opt->alg = 1;
@@ -604,25 +526,15 @@ void parse_args(int argc, char ** argv, opt_t * opt)
        exit(1);
      }
 }
-void init_args(int seed, int size, char * alg, int type, opt_t * opt)
-// Descricao: inicia as variáveis de acorodo com as entradas
-// Entrada: seed, size, alg, argc, argv, opt
-// Saida: opt
-{
-     // inicializacao variaveis globais para opcoes
-     opt->seed = seed;
-     opt->size = size;
-     opt->alg = name2num(alg);
-     opt->type= type;
 
+void init_args(int seed, int size, char * alg, int type, opt_t * opt) {
+  opt->seed = seed;
+  opt->size = size;
+  opt->alg = name2num(alg);
+  opt->type= type;
 }
 
-void clkDiff(struct timespec t1, struct timespec t2,
-                   struct timespec * res)
-// Descricao: calcula a diferenca entre t2 e t1, que e armazenada em res
-// Entrada: t1, t2
-// Saida: res
-{
+void clkDiff(struct timespec t1, struct timespec t2, struct timespec * res) {
   if (t2.tv_nsec < t1.tv_nsec){
     // ajuste necessario, utilizando um segundo de tv_sec
     res-> tv_nsec = 1000000000+t2.tv_nsec-t1.tv_nsec;
@@ -633,7 +545,6 @@ void clkDiff(struct timespec t1, struct timespec t2,
     res-> tv_sec = t2.tv_sec-t1.tv_sec;
   }
 }
-
 
 int main (int argc, char ** argv){
   sortperf_t s;
@@ -652,7 +563,6 @@ int main (int argc, char ** argv){
   srand48(opt.seed);
   initVector(vet, opt.size,opt.type);
   vet[opt.size] = vet[0]; // for heapsort
-
 
   retp = clock_gettime(CLOCK_MONOTONIC, &inittp);
   switch (opt.alg){
