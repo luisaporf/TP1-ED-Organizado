@@ -25,7 +25,7 @@ for param, coluna_idx in zip(parametros, parametros_colunas):
         # Plotar o gráfico
         plt.figure(figsize=(10, 6))
         plt.plot(np.arange(1, num_pontos + 1), coluna)
-        plt.xlabel('Índice')
+        plt.xlabel('Tamanho')
         plt.ylabel(param)
         plt.title(f'Algoritmo {i+1}')
         plt.grid(True)
